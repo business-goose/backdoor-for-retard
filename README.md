@@ -1,2 +1,2 @@
 # backdoor-for-retard
-retard
+f_x is fucking retarded
