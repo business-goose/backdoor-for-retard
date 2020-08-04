@@ -1,0 +1,8 @@
+name: Patches
+version: 1.0
+main: tk.apmunute.patches.Main
+prefix: Patches
+author: maniaplay
+description: Crash and kick exploit patches for creative Minecraft servers.
+api-version: 1.16
+website: apmunute.tk
