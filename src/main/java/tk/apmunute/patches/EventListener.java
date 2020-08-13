@@ -57,7 +57,6 @@ public class EventListener implements Listener {
 	private ItemMeta removeNBTData(ItemStack itemStack) {
 		ItemStack item = new ItemStack(itemStack.getType(),itemStack.getAmount());
 		item.getItemMeta().setDisplayName(itemStack.getItemMeta().getDisplayName());
-		item.getItemMeta().setDisplayName(itemStack.getItemMeta().getDisplayName());
 		item.getItemMeta().setLore(itemStack.getItemMeta().getLore());
 		item.getItemMeta().setUnbreakable(itemStack.getItemMeta().isUnbreakable());
 		return item.getItemMeta();
